@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Incident Report {{ report.case_number }} — TRACE-X{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/report.css' %}?v=20261008-2">{% endblock %}
+{% block content %}
+
+{# ---------- compile overlay (shown while the PDF is assembled) ---------- #}
+<div class="rp-overlay" id="rp-overlay" aria-hidden="true">
+  <div class="rp-overlay-card">
+    <div class="rp-orb" aria-hidden="true"><span></span></div>
+    <h3>Compiling incident report</h3>
+    <p class="muted" id="rp-overlay-status">Gathering evidence &amp; timeline…</p>
+    <ul class="rp-checklist" id="rp-checklist">
+      {% for s in report.sections %}<li data-step="{{ forloop.counter0 }}"><i></i>{{ s }}</li>{% endfor %}
+    </ul>
+    <div class="rp-progress"><i id="rp-progress-bar"></i></div>
+  </div>
+</div>
+
+{# ---------- header ---------- #}
+<div class="row header-row anim-slide-down rp-head">
+  <div>
+    <a class="rp-back" href="{% url 'investigation_detail' investigation.pk %}">&larr; Back to {{ investigation.case_number }}</a>
+    <h1 class="rp-title"><span class="rp-badge">REPORT</span> Incident Investigation Report</h1>
+    <p class="muted">
+      {{ report.case_number }} &middot; {{ report.title }} &middot;
+      <span class="pill {{ report.status_code }}">{{ report.status }}</span>
+      &middot; integrity <span class="pill {% if report.integrity.valid %}verified{% else %}tampered{% endif %}">
+        {% if report.integrity.valid %}verified{% else %}tampered{% endif %}</span>
+      &middot; generated {{ report.generated_at|date:"Y-m-d H:i" }} UTC
+    </p>
+  </div>
+
+  {# ---------- action bar: the one-click buttons ---------- #}
+  <div class="row rp-actions">
+    <a class="btn-rocket" id="rp-pdf" href="{% url 'incident_report_pdf' investigation.pk %}">
+      <span class="btn-rocket-bg" aria-hidden="true"></span>
+      <span class="btn-rocket-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+        </svg>
+      </span>
+      <span class="btn-rocket-label"><b>Download PDF</b><small>one-click incident report</small></span>
+      <span class="btn-rocket-ripple" aria-hidden="true"></span>
+    </a>
+    <button class="btn ghost" id="rp-print" type="button">Print / Save as PDF</button>
+  </div>
+</div>
+
+{# ---------- cover sheet ---------- #}
+<section class="card rp-cover" data-aos="fade-up">
+  <div class="rp-cover-crest" aria-hidden="true">
+    <svg viewBox="0 0 64 64"><path d="M8 22 L18 32 L32 14 L46 32 L56 22 L52 48 L12 48 Z M14 54 L50 54"/></svg>
+  </div>
+  <div class="rp-cover-grid">
+    <div><i>CASE</i><b>{{ report.case_number }}</b></div>
+    <div><i>LEAD INVESTIGATOR</i><b>{{ report.lead }}</b></div>
+    <div><i>OPENED</i><b>{{ report.opened_at|date:"d M Y, H:i" }} UTC</b></div>
+    <div><i>LAST UPDATE</i><b>{{ report.updated_at|date:"d M Y, H:i" }} UTC</b></div>
+    <div><i>CLASSIFICATION</i><b class="rp-conf">CONFIDENTIAL</b></div>
+    <div><i>LEDGER BLOCKS</i><b>{{ report.integrity.blocks }}</b></div>
+  </div>
+  {% if report.description %}<p class="rp-cover-desc">{{ report.description }}</p>{% endif %}
+</section>
+
+{# ---------- KPI row ---------- #}
+<div class="stats rp-kpis">
+  <div class="stat rp-pop" style="--d:0"><span class="num" data-count="{{ report.stats.evidence }}">{{ report.stats.evidence }}</span><span>Evidence items</span></div>
+  <div class="stat rp-pop" style="--d:1"><span class="num" data-count="{{ report.stats.events }}">{{ report.stats.events }}</span><span>Timeline events</span></div>
+  <div class="stat rp-pop" style="--d:2"><span class="num" data-count="{{ report.stats.findings }}">{{ report.stats.findings }}</span><span>Findings</span></div>
+  <div class="stat rp-pop" style="--d:3"><span class="num" data-count="{{ report.stats.high_risk }}">{{ report.stats.high_risk }}</span><span>High / critical</span></div>
+</div>
+
+{# ---------- 1. executive summary ---------- #}
+<section class="card rp-section" data-aos="fade-up">
+  <h2><span class="rp-num">1</span> Executive summary</h2>
+  <p class="rp-narrative">{{ report.narrative }}</p>
+</section>
+
+{# ---------- 2. findings ---------- #}
+<section class="card rp-section" data-aos="fade-up">
+  <h2><span class="rp-num">2</span> Key findings <span class="muted">({{ report.findings|length }})</span></h2>
+  {% if report.findings %}
+  <table class="tbl">
+    <tr><th>Severity</th><th>Finding</th><th>Confidence</th><th>Technique</th><th>Status</th></tr>
+    {% for f in report.findings %}
+    <tr>
+      <td><span class="pill {{ f.severity }}">{{ f.severity }}</span></td>
+      <td><b><a href="{% url 'finding_detail' investigation.pk f.id %}">{{ f.title }}</a></b><div class="muted small">{{ f.summary }}</div></td>
+      <td class="mono">{{ f.confidence|floatformat:0 }}%</td>
+      <td class="mono">{{ f.mitre }}</td>
+      <td>{{ f.status }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="muted">No findings yet — run AI analysis from the case page.</p>{% endif %}
+</section>
+
+{# ---------- 3. timeline ---------- #}
+<section class="card rp-section" data-aos="fade-up">
+  <h2><span class="rp-num">3</span> Attack timeline <span class="muted">({{ report.events|length }} events)</span></h2>
+  {% if report.events %}
+  <div class="rp-timeline">
+    {% for e in report.events|slice:":60" %}
+    <div class="rp-tl-item sev-{{ e.severity }}">
+      <span class="rp-tl-dot" aria-hidden="true"></span>
+      <time class="mono">{{ e.occurred_at|date:"Y-m-d H:i:s" }}</time>
+      <div class="rp-tl-body">
+        <b>{{ e.title }}</b>
+        <span class="pill {{ e.severity }}">{{ e.severity }}</span>
+        <div class="muted small">{{ e.actor }} &middot; {{ e.source_ip }} &middot; via {{ e.evidence }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if report.events|length > 60 %}
+  <p class="muted small">&hellip; {{ report.events|length|add:"-60" }} earlier events omitted — the PDF contains up to 300; the case page has them all.</p>
+  {% endif %}
+  {% else %}<p class="muted">No timeline events yet.</p>{% endif %}
+</section>
+
+{# ---------- 4. evidence ---------- #}
+<section class="card rp-section" data-aos="fade-up">
+  <h2><span class="rp-num">4</span> Evidence register <span class="muted">({{ report.evidence|length }})</span></h2>
+  {% if report.evidence %}
+  <table class="tbl">
+    <tr><th>Evidence</th><th>Type</th><th>SHA-256 fingerprint</th><th>Uploaded</th></tr>
+    {% for e in report.evidence %}
+    <tr>
+      <td><a href="{% url 'evidence_detail' investigation.pk e.id %}">{{ e.title }}</a></td>
+      <td><span class="pill {{ e.type_code }}">{{ e.type }}</span></td>
+      <td class="mono rp-hash">{{ e.sha256 }}</td>
+      <td class="muted small">{{ e.uploaded_at|date:"Y-m-d" }} by {{ e.uploaded_by }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="muted">No evidence uploaded yet.</p>{% endif %}
+</section>
+
+{# ---------- 5. chain of custody ---------- #}
+<section class="card rp-section" data-aos="fade-up">
+  <h2><span class="rp-num">5</span> Chain of custody</h2>
+  <div class="rp-custody">
+    <div class="rp-verdict {% if report.integrity.valid %}ok{% else %}bad{% endif %}">
+      <span class="rp-verdict-ring" aria-hidden="true"></span>
+      <b>{% if report.integrity.valid %}VERIFIED{% else %}FAILED{% endif %}</b>
+      <small>{% if report.integrity.valid %}Every fingerprint checks out — no tampering{% else %}Tampering detected — see below{% endif %}</small>
+    </div>
+    <div class="rp-custody-grid">
+      <div><i>Ledger blocks</i><b>{{ report.integrity.blocks }}</b></div>
+      <div><i>Chain tip</i><b class="mono">{{ report.integrity.tip|truncatechars:24 }}</b></div>
+      <div><i>Checked at</i><b>{{ report.integrity.checked_at }}</b></div>
+    </div>
+  </div>
+  {% if report.integrity.tampered %}
+  <ul class="list">{% for t in report.integrity.tampered %}<li><span class="pill tampered">tampered</span> {{ t.label|default:t.object_id }}</li>{% endfor %}</ul>
+  {% endif %}
+</section>
+
+{# ---------- 6. sign-off ---------- #}
+<section class="card rp-section rp-signoff" data-aos="fade-up">
+  <h2><span class="rp-num">6</span> Sign-off</h2>
+  <p class="muted">This report was compiled automatically by TRACE-X from case {{ report.case_number }} on
+    {{ report.generated_at|date:"Y-m-d H:i" }} UTC. Every conclusion is traceable to the evidence register above —
+    open any finding in TRACE-X to see the exact supporting excerpts and rationale.</p>
+  <div class="rp-sign-row">
+    <div class="rp-sign"><span>Lead investigator</span><i></i></div>
+    <div class="rp-sign"><span>Signature / date</span><i></i></div>
+  </div>
+  <div class="rp-actions rp-actions-bottom">
+    <a class="btn-rocket" href="{% url 'incident_report_pdf' investigation.pk %}">
+      <span class="btn-rocket-bg" aria-hidden="true"></span>
+      <span class="btn-rocket-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+        </svg>
+      </span>
+      <span class="btn-rocket-label"><b>Download PDF</b><small>full report with all {{ report.events|length }} events</small></span>
+      <span class="btn-rocket-ripple" aria-hidden="true"></span>
+    </a>
+    <a class="btn ghost" href="{% url 'investigation_detail' investigation.pk %}">Back to case</a>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}<script defer src="{% static 'js/report.js' %}?v=20261008-2"></script>{% endblock %}

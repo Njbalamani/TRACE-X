@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b1220;
+}
+::-webkit-scrollbar-thumb {
+  background: #27395a;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b5079;
+}
+
+@layer components {
+  .card {
+    @apply rounded-lg border border-base-700 bg-base-850 shadow-sm;
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-accent-dim text-white hover:bg-accent text-base-950 hover:text-base-950 font-semibold;
+  }
+  .btn-ghost {
+    @apply btn border border-base-600 text-slate-300 hover:bg-base-700;
+  }
+  .btn-danger {
+    @apply btn bg-danger/15 text-danger border border-danger/40 hover:bg-danger/25;
+  }
+  .input {
+    @apply w-full rounded-md border border-base-600 bg-base-900 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 outline-none focus:border-accent;
+  }
+  .th {
+    @apply px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400;
+  }
+  .td {
+    @apply px-3 py-2.5 text-sm text-slate-300;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold;
+  }
+}

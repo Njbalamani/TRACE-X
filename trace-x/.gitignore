@@ -1,0 +1,36 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets & local config
+.env
+.secret_key
+
+# Runtime data (never commit evidence, databases, logs or generated reports)
+db.sqlite3
+*.sqlite3
+data/*.db
+media/
+storage/evidence/*
+storage/reports/*
+!storage/evidence/.gitkeep
+!storage/reports/.gitkeep
+staticfiles/
+*.log
+server.log
+server.err.log
+
+# Frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Screenshots / scratch
+_shots/
+*.tmp
+.DS_Store

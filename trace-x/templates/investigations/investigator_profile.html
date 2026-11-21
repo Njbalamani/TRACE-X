@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.username }} — TRACE-X{% endblock %}
+{% block content %}
+<div class="row header-row anim-slide-down">
+  <div class="row" style="align-items:center;gap:16px">
+    <span class="um-ring" aria-hidden="true"><span class="um-big">{{ profile_user.username|first|upper }}</span></span>
+    <div>
+      <h1>{{ profile_user.username }}</h1>
+      <p class="muted">
+        {% if profile_user.is_staff %}Administrator{% else %}Investigator{% endif %}
+        · joined {{ profile_user.date_joined|date:"M Y" }}
+        {% if is_self %} · <strong>this is you</strong>{% endif %}
+      </p>
+    </div>
+  </div>
+  <a class="btn ghost" href="{% url 'investigator_roster' %}">&larr; All investigators</a>
+</div>
+
+<section class="card anim-slide-down">
+  <h2>Activity</h2>
+  <div class="row" style="gap:10px">
+    <span class="pill">{{ case_count }} case{{ case_count|pluralize }}</span>
+    <span class="pill">{{ evidence_count }} evidence</span>
+    <span class="pill">{{ finding_count }} finding{{ finding_count|pluralize }}</span>
+  </div>
+  <p class="muted small" style="margin-top:10px">View-only profile — you can open {{ profile_user.username }}'s attack cases to review them, but only {{ profile_user.username }} or an administrator can change them.</p>
+</section>
+
+<section class="card" data-aos="fade-up">
+  <h2>Attack cases</h2>
+  <table class="tbl">
+    <tr><th>Case #</th><th>Title</th><th>Status</th><th>Evidence</th><th>Findings</th><th>Created</th></tr>
+    {% for i in cases %}
+    <tr>
+      <td><a href="{% url 'investigation_detail' i.pk %}">{{ i.case_number }}</a></td>
+      <td><a href="{% url 'investigation_detail' i.pk %}">{{ i.title }}</a></td>
+      <td><span class="pill {{ i.status }}">{{ i.status }}</span></td>
+      <td>{{ i.evidence_count }}</td>
+      <td>{{ i.finding_count }}</td>
+      <td class="muted">{{ i.created_at|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="muted">No cases yet.</td></tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}

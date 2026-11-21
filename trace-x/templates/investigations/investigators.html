@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Investigators — TRACE-X{% endblock %}
+{% block content %}
+<div class="row header-row anim-slide-down">
+  <div>
+    <h1>Investigators</h1>
+    <p class="muted">Everyone on this instance — find a colleague or friend by name, username or email. Profiles are view-only.</p>
+  </div>
+  <form class="inv-search" method="get" action="{% url 'investigator_roster' %}" role="search">
+    <span class="inv-search-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    </span>
+    <input type="search" id="inv-q" name="q" value="{{ query }}" placeholder="Search investigators… (e.g. santhosh)" autocomplete="off" aria-label="Search investigators">
+    <button class="btn" type="submit">Search</button>
+    {% if query %}<a class="inv-clear" href="{% url 'investigator_roster' %}" title="Clear search">&times;</a>{% endif %}
+  </form>
+</div>
+
+<p class="muted small inv-count" id="inv-count">
+  <b>{{ roster|length }}</b> of <b>{{ total_count }}</b> investigator{{ total_count|pluralize }}
+  {% if query %}matching &ldquo;{{ query }}&rdquo;{% else %}shown — search above to narrow it down{% endif %}
+</p>
+
+<div class="grid2" id="inv-grid">
+  {% for u in roster %}
+  <section class="card inv-card" data-aos="fade-up" data-aos-delay="0"
+           data-search="{{ u.username|lower }} {{ u.first_name|lower }} {{ u.last_name|lower }} {{ u.email|lower }}">
+    <div class="row" style="align-items:center;justify-content:space-between;gap:14px">
+      <div class="row" style="align-items:center;gap:14px">
+        <span class="um-ring" aria-hidden="true"><span class="um-big">{{ u.username|first|upper }}</span></span>
+        <div>
+          <a href="{% url 'investigator_profile' u.username %}" style="font-weight:700;font-size:16px">{{ u.username }}</a>
+          {% if u == request.user %}<span class="pill ok">you</span>{% endif %}
+          <div class="muted small">
+            {% if u.is_staff %}Administrator{% else %}Investigator{% endif %}
+            {% if u.first_name %} &middot; {{ u.first_name }}{% endif %}
+            &middot; joined {{ u.date_joined|date:"M Y" }}
+          </div>
+        </div>
+      </div>
+      <a class="btn ghost" href="{% url 'investigator_profile' u.username %}">View profile</a>
+    </div>
+    <hr>
+    <div class="row" style="gap:10px">
+      <span class="pill">{{ u.case_count }} case{{ u.case_count|pluralize }}</span>
+      <span class="pill">{{ u.evidence_count }} evidence</span>
+      <span class="pill">{{ u.finding_count }} finding{{ u.finding_count|pluralize }}</span>
+    </div>
+  </section>
+  {% empty %}
+  <section class="card" id="inv-empty">
+    <p class="muted">
+      {% if query %}No investigator matches &ldquo;{{ query }}&rdquo;. Check the spelling or
+      <a href="{% url 'investigator_roster' %}">clear the search</a>.
+      {% else %}No investigators found.{% endif %}
+    </p>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    var input = document.getElementById("inv-q");
+    var grid = document.getElementById("inv-grid");
+    if (!input || !grid) return;
+    var cards = grid.querySelectorAll(".inv-card");
+    var count = document.getElementById("inv-count");
+    input.addEventListener("input", function () {
+      var q = input.value.trim().toLowerCase();
+      var shown = 0;
+      cards.forEach(function (card) {
+        var hit = !q || (card.getAttribute("data-search") || "").indexOf(q) !== -1;
+        card.style.display = hit ? "" : "none";
+        if (hit) shown += 1;
+      });
+      if (count) {
+        count.innerHTML = q
+          ? "<b>" + shown + "</b> investigator" + (shown === 1 ? "" : "s") + " matching &ldquo;" + q.replace(/</g, "&lt;") + "&rdquo;"
+          : "<b>" + cards.length + "</b> investigators shown — search above to narrow it down";
+      }
+    });
+  })();
+</script>
+{% endblock %}

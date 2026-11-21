@@ -1,0 +1,33 @@
+{
+  "case_reference": "DEMO-ALERTS-2026-10-07",
+  "alerts": [
+    {
+      "id": "ALR-9003",
+      "timestamp": "2026-10-07T09:44:58",
+      "type": "phishing_email_quarantined",
+      "severity": "medium",
+      "recipient": "a.carter",
+      "message": "Email from security-alert@secure-notify.example quarantined. Contained link https://portal-secure.example-login.tk/auth?id=AC-4471 requesting credentials."
+    },
+    {
+      "id": "ALR-9001",
+      "timestamp": "2026-10-07T10:04:45",
+      "type": "brute_force_detected",
+      "severity": "high",
+      "source_ip": "203.0.113.10",
+      "username": "a.carter",
+      "hostname": "WEB-SRV-01",
+      "message": "Multiple failed authentications for a.carter followed by successful login from same source within 4 minutes."
+    },
+    {
+      "id": "ALR-9002",
+      "timestamp": "2026-10-07T10:18:10",
+      "type": "possible_data_exfiltration",
+      "severity": "critical",
+      "source_ip": "192.0.2.50",
+      "destination_ip": "198.51.100.23",
+      "hostname": "WEB-SRV-01",
+      "message": "Outbound transfer of 851968000 bytes to external host 198.51.100.23 shortly after sensitive file access on WEB-SRV-01."
+    }
+  ]
+}

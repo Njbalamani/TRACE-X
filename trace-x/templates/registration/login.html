@@ -1,0 +1,224 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}TRACE-X - Digital Forensics{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0720;--bg2:#120a2e;--gold:#E8C25A;--gold2:#F6DE8E;--vio:#8B6CFF;--mag:#B58CFF;--ok:#2FE6A6;--text:#F4EFFF;--muted:#9a90bd;--line:rgba(232,194,90,.2);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0720}}
+:root[data-theme="dark"]{--bg:#0b0720}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.wrap{display:grid;grid-template-columns:58% 42%;min-height:100vh}
+.left{position:relative;display:flex;flex-direction:column;justify-content:center;padding:40px clamp(24px,7vw,120px);background:radial-gradient(700px 500px at 20% 10%,rgba(139,108,255,.16),transparent 60%),radial-gradient(600px 400px at 90% 100%,rgba(232,194,90,.07),transparent 60%),var(--bg)}
+.left::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(232,194,90,.04) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(232,194,90,.04) 1px,transparent 1px) 0 0/48px 48px;mask-image:radial-gradient(ellipse at 30% 40%,#000,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 30% 40%,#000,transparent 75%);pointer-events:none}
+.box{position:relative;width:100%;max-width:470px;animation:in .8s cubic-bezier(.22,.8,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:44px}
+.badge{font:700 12px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#1a1103;background:linear-gradient(135deg,var(--gold2),var(--gold));padding:10px 12px;border-radius:9px;box-shadow:0 0 22px rgba(232,194,90,.3)}
+.brand b{display:block;font:700 22px Cinzel,serif;color:var(--gold2);letter-spacing:.04em}
+.brand small{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.2em;color:var(--muted)}
+h1{font:700 clamp(28px,3.2vw,40px)/1.15 Cinzel,serif;margin:0 0 12px;background:linear-gradient(90deg,var(--gold2),var(--gold) 60%,var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:16px;line-height:1.6;margin:0 0 34px}
+.lab{display:block;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.16em;color:var(--muted);margin:0 0 8px;text-transform:uppercase}
+.field{display:flex;align-items:center;gap:12px;height:54px;padding:0 16px;margin-bottom:20px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:.3s}
+.field:hover{border-color:rgba(232,194,90,.4)}
+.field:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,194,90,.12),0 0 26px rgba(232,194,90,.18);background:rgba(232,194,90,.05)}
+.field svg{width:20px;height:20px;flex:none;color:var(--muted);transition:.3s}
+.field:focus-within svg.ic{color:var(--gold);filter:drop-shadow(0 0 6px rgba(232,194,90,.7))}
+.field input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:400 16px Inter,sans-serif}
+.field input::placeholder{color:#6d6490}
+.eye{background:none;border:0;padding:4px;cursor:pointer;color:var(--muted);display:flex}.eye:hover{color:var(--gold)}
+.row{display:flex;justify-content:flex-end;margin:-6px 0 26px}
+a{color:var(--gold);text-decoration:none;transition:.25s}a:hover{color:var(--gold2);text-shadow:0 0 12px rgba(232,194,90,.5)}
+.row a{font-size:14px}
+.go{width:100%;height:56px;border:0;border-radius:12px;cursor:pointer;font:600 16px Inter,sans-serif;color:#1a1103;background:linear-gradient(110deg,#b98a28,#f6de8e,#d9ab3e,#f6de8e,#b98a28);background-size:300% 100%;background-position:0 0;box-shadow:0 8px 30px rgba(232,194,90,.25);transition:background-position .8s ease,transform .3s,box-shadow .3s;display:flex;align-items:center;justify-content:center;gap:10px}
+.go:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 12px 40px rgba(232,194,90,.45)}
+.go:active{transform:none}.go i{font-style:normal;transition:.3s}.go:hover i{transform:translateX(5px)}
+.new{text-align:center;color:var(--muted);font-size:15px;margin-top:26px}
+.msg{min-height:20px;font:500 12px 'JetBrains Mono',monospace;letter-spacing:.08em;color:var(--ok);text-align:center;margin-top:14px}
+.sec{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:40px;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:#6d6490}
+.sec i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+/* right */
+.right{position:sticky;top:0;height:100vh;overflow:hidden;border-left:1px solid var(--line);background:radial-gradient(500px 420px at 70% 20%,rgba(232,194,90,.14),transparent 65%),radial-gradient(520px 480px at 20% 80%,rgba(181,140,255,.2),transparent 65%),linear-gradient(160deg,#1a0f42,#0e0828 60%,#0a0620)}
+.right::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(232,194,90,.06) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(232,194,90,.06) 1px,transparent 1px) 0 0/44px 44px,repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);animation:gm 30s linear infinite}
+@keyframes gm{to{background-position:0 44px,44px 0,0 0}}
+.right::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(5,2,15,.6))}
+#pc{position:absolute;inset:0;width:100%;height:100%}
+.ring{position:absolute;left:50%;top:38%;border:1px solid rgba(232,194,90,.14);border-radius:50%;transform:translate(-50%,-50%)}
+.r1{width:420px;height:420px;border-style:dashed;animation:sp 60s linear infinite}.r2{width:560px;height:560px;border-color:rgba(181,140,255,.14)}
+@keyframes sp{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.slide{position:absolute;inset:0;z-index:2;opacity:0;transform:translateY(10px) scale(.985);transition:opacity .75s cubic-bezier(.22,.8,.3,1),transform .75s cubic-bezier(.22,.8,.3,1);pointer-events:none}
+.slide.on{opacity:1;transform:none}
+.art{position:absolute;left:3%;right:3%;top:5%;width:94%;height:70%;overflow:visible;animation:fl 7s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-7px)}}
+.cap{position:absolute;left:0;right:0;bottom:78px;padding:0 9%;text-align:center}
+.cap em{display:block;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.24em;color:var(--gold);font-style:normal;text-transform:uppercase;margin-bottom:10px}
+.cap h2{font:700 clamp(22px,2.3vw,32px)/1.2 Cinzel,serif;margin:0 0 10px;color:var(--text)}
+.cap p{margin:0 auto;max-width:420px;color:var(--muted);font-size:15px;line-height:1.55}
+.dots{position:absolute;z-index:3;left:0;right:0;bottom:30px;display:flex;justify-content:center;gap:10px}
+.dots button{position:relative;width:9px;height:9px;padding:0;border:0;border-radius:6px;background:rgba(255,255,255,.25);cursor:pointer;overflow:hidden;transition:width .5s cubic-bezier(.22,.8,.3,1),background .3s}
+.dots button.on{width:38px;background:rgba(232,194,90,.25)}
+.dots button i{position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left}
+.dots button.on i{animation:pg 2.8s linear forwards}
+.right:hover .dots button.on i{animation-play-state:paused}
+@keyframes pg{to{transform:scaleX(1)}}
+.t{font:500 9px 'JetBrains Mono',monospace;letter-spacing:.1em;fill:#F6DE8E}.t2{font:500 8px 'JetBrains Mono',monospace;fill:#9a90bd;letter-spacing:.08em}
+.pl{animation:pu 3.6s ease-in-out infinite}@keyframes pu{50%{opacity:.35}}
+.dash{stroke-dasharray:4 6;animation:ds 8s linear infinite}@keyframes ds{to{stroke-dashoffset:-100}}
+.spin{transform-box:fill-box;transform-origin:center;animation:sp2 30s linear infinite}@keyframes sp2{to{transform:rotate(360deg)}}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr 1fr}.left{padding:40px 28px}}
+@media(max-width:760px){
+ .wrap{grid-template-columns:1fr}.left{padding:36px 22px 44px}.brand{margin-bottom:30px}
+ .right{position:relative;height:300px;border-left:0;border-top:1px solid var(--line)}
+ .art{top:0;height:68%}.cap{bottom:44px;padding:0 6%}.cap em{display:none}.cap h2{font-size:17px;margin:0 0 3px}.cap p{font-size:12px}.dots{bottom:16px}.ring{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+
+</head>
+<body>
+>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="vz" x1="0" x2="1"><stop offset="0" stop-color="#E8C25A"/><stop offset="1" stop-color="#8B6CFF"/></linearGradient>
+<linearGradient id="holo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8C25A" stop-opacity=".16"/><stop offset="1" stop-color="#8B6CFF" stop-opacity=".04"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<symbol id="inv" viewBox="0 0 200 260">
+<path d="M8 260 22 176Q100 146 178 176L192 260Z" fill="#150c34" stroke="#E8C25A" stroke-opacity=".35"/>
+<path d="M70 168 100 214 130 168" fill="none" stroke="#E8C25A" stroke-opacity=".5"/>
+<rect x="82" y="208" width="36" height="22" rx="4" fill="#0c0720" stroke="#E8C25A" stroke-opacity=".7"/><text x="100" y="223" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#F6DE8E">X001</text>
+<path d="M100 10C60 10 44 48 46 92c2 34 20 56 54 62 34-6 52-28 54-62 2-44-14-82-54-82Z" fill="#1c1244" stroke="#8B6CFF" stroke-opacity=".6"/>
+<path d="M100 36C74 36 62 62 64 96c2 28 16 44 36 48 20-4 34-20 36-48 2-34-10-60-36-60Z" fill="#04020a"/>
+<path d="M62 78Q100 66 138 78V90Q100 80 62 90Z" fill="#0c0720" stroke="#E8C25A" stroke-opacity=".6"/>
+<path d="M70 114Q100 108 130 114C128 134 116 148 100 152 84 148 72 134 70 114Z" fill="#0a0618"/>
+<g filter="url(#glow)"><path d="M70 98 94 94 98 103 76 106Z" fill="url(#vz)"/><path d="M130 98 106 94 102 103 124 106Z" fill="url(#vz)"/></g>
+<path d="M46 92C44 48 60 10 100 10" fill="none" stroke="#E8C25A" stroke-width="2" opacity=".8" filter="url(#glow)"/><path d="M154 92C156 48 140 10 100 10" fill="none" stroke="#B58CFF" stroke-width="2" opacity=".8" filter="url(#glow)"/>
+</symbol></defs></svg>
+
+<div class="wrap">
+<section class="left"><div class="box">
+ <div class="brand"><span class="badge">TRX</span><span><b>TRACE-X</b><small>DIGITAL FORENSICS</small></span></div>
+ <h1>Welcome back, Investigator</h1>
+ <p class="sub">Secure access to your digital forensic command center.</p>
+ <form id="f" method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  <label class="lab" for="u">User ID / Email</label>
+  <div class="field"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg><input id="u" name="username" type="text" placeholder="investigator@agency.gov" autocomplete="username" autofocus></div>
+  <label class="lab" for="p">Password</label>
+  <div class="field"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><input id="p" name="password" type="password" placeholder="Enter your password" autocomplete="current-password"><button class="eye" id="eye" type="button" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+  <input type="hidden" name="next" value="{{ next }}">
+  <div class="row"><a href="#">Forgot password?</a></div>
+  <button class="go" id="go" type="submit">Access Investigation Center <i></i></button>
+  {% if messages %}{% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}{% endif %}<div class="msg" id="msg">{% if form.errors %}<span style="color:#ff9bb0">Invalid username or password.</span>{% endif %}</div>
+  {% if allow_signup %}<div class="new">New investigator? <a href="{% url 'signup' %}">Create account</a></div>{% endif %}</form>
+  
+ <div class="sec"><i></i>END-TO-END ENCRYPTED Â· SHA-256 AUDIT TRAIL</div>
+</div></section>
+
+<aside class="right" id="rp" aria-label="TRACE-X capabilities">
+ <canvas id="pc"></canvas><div class="ring r1"></div><div class="ring r2"></div>
+
+ <!-- 1 -->
+ <div class="slide on"><svg class="art" viewBox="0 0 520 420"><use href="#inv" x="20" y="100" width="200" height="260"/>
+  <path class="dash" d="M190 250C220 240 240 220 262 200" stroke="#E8C25A" fill="none"/>
+  <rect x="255" y="60" width="235" height="260" rx="10" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/>
+  <g fill="none" stroke="#E8C25A" stroke-opacity=".7" class="pl"><ellipse cx="335" cy="170" rx="14" ry="18"/><ellipse cx="335" cy="170" rx="26" ry="32" stroke-dasharray="3 4"/><ellipse cx="335" cy="170" rx="38" ry="46"/><ellipse cx="335" cy="170" rx="50" ry="60" stroke-dasharray="6 5"/></g>
+  <text class="t" x="275" y="82">DIGITAL FINGERPRINT</text>
+  <rect x="405" y="100" width="64" height="82" rx="4" fill="#150c34" stroke="#B58CFF" stroke-opacity=".7"/><path d="M415 118h44M415 130h44M415 142h30M415 154h38" stroke="#B58CFF" stroke-opacity=".6"/>
+  <text class="t2" x="408" y="196">REPORT.PDF</text>
+  <rect x="270" y="262" width="205" height="42" rx="6" fill="#0c0720" stroke="#E8C25A" stroke-opacity=".5"/><text class="t2" x="282" y="278">SHA-256</text><text class="t" x="282" y="294">9f2c7a1eâ€¦b3d4a41e</text>
+  <g fill="#0c0720" stroke="#E8C25A"><circle class="pl" cx="240" cy="70" r="5"/><circle class="pl" cx="500" cy="230" r="5" style="animation-delay:1s"/><circle class="pl" cx="60" cy="70" r="5" style="animation-delay:2s"/></g>
+  <rect x="40" y="330" width="60" height="40" rx="4" fill="#150c34" stroke="#E8C25A" stroke-opacity=".5"/><text class="t2" x="50" y="354">EVTX</text>
+ </svg><div class="cap"><em>Digital Evidence</em><h2>Preserve the Evidence</h2><p>Every artifact. Every hash. Every conclusion.</p></div></div>
+
+ <!-- 2 -->
+ <div class="slide"><svg class="art" viewBox="0 0 520 420"><use href="#inv" x="10" y="170" width="160" height="208"/>
+  <path d="M290 40V350" class="dash" stroke="#E8C25A" stroke-opacity=".7"/>
+  <g class="t">
+   <g><circle cx="290" cy="50" r="7" fill="#0c0720" stroke="#E8C25A"/><rect x="315" y="34" width="150" height="32" rx="6" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><text x="327" y="54">PHISHING</text></g>
+   <g><circle class="pl" cx="290" cy="124" r="7" fill="#0c0720" stroke="#E8C25A"/><rect x="315" y="108" width="170" height="32" rx="6" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><text x="327" y="128">CREDENTIAL ABUSE</text></g>
+   <g><circle cx="290" cy="198" r="7" fill="#0c0720" stroke="#B58CFF"/><rect x="315" y="182" width="190" height="32" rx="6" fill="url(#holo)" stroke="#B58CFF" stroke-opacity=".6"/><text x="327" y="202">PRIVILEGE ESCALATION</text></g>
+   <g><circle class="pl" cx="290" cy="272" r="7" fill="#0c0720" stroke="#B58CFF"/><rect x="315" y="256" width="90" height="32" rx="6" fill="url(#holo)" stroke="#B58CFF" stroke-opacity=".6"/><text x="327" y="276">C2</text></g>
+   <g><circle cx="290" cy="346" r="7" fill="#B58CFF"/><rect x="315" y="330" width="150" height="32" rx="6" fill="url(#holo)" stroke="#B58CFF"/><text x="327" y="350">EXFILTRATION</text></g>
+  </g>
+  <g class="t2"><text x="215" y="54">T+00:00</text><text x="215" y="128">T+00:41</text><text x="215" y="202">T+01:12</text><text x="215" y="276">T+02:14</text><text x="215" y="350">T+03:05</text></g>
+  <path d="M286 86l4 8 4-8M286 160l4 8 4-8M286 234l4 8 4-8M286 308l4 8 4-8" stroke="#E8C25A" fill="none"/>
+ </svg><div class="cap"><em>Attack Reconstruction</em><h2>Reconstruct the Attack</h2><p>Turn fragmented artifacts into a complete incident timeline.</p></div></div>
+
+ <!-- 3 -->
+ <div class="slide"><svg class="art" viewBox="0 0 520 420">
+  <circle cx="260" cy="130" r="100" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><circle cx="260" cy="130" r="78" fill="none" stroke="#B58CFF" stroke-opacity=".5" stroke-dasharray="3 5" class="spin"/><circle cx="260" cy="130" r="52" fill="#0c0720" stroke="#E8C25A"/>
+  <g class="spin" stroke="#E8C25A" stroke-opacity=".6"><path d="M260 70v120M200 130h120M217 87l86 86M303 87l-86 86"/></g>
+  <circle cx="260" cy="130" r="26" fill="#150c34" stroke="#2FE6A6" filter="url(#glow)"/><path d="M248 130l8 8 16-17" stroke="#2FE6A6" stroke-width="3" fill="none"/>
+  <text class="t" x="70" y="80">SHA-256</text><text class="t" x="400" y="80">VERIFIED</text>
+  <path d="M110 84l50 30M410 84l-46 30" stroke="#E8C25A" stroke-opacity=".4"/>
+  <text class="t2" x="190" y="262">HASH CHAIN</text>
+  <path id="ch" d="M80 300H440" stroke="#E8C25A" stroke-opacity=".5" fill="none"/>
+  <g fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".7"><rect x="30" y="274" width="90" height="52" rx="6"/><rect x="140" y="274" width="90" height="52" rx="6"/><rect x="250" y="274" width="90" height="52" rx="6"/><rect x="360" y="274" width="90" height="52" rx="6" stroke="#2FE6A6"/></g>
+  <g class="t2"><text x="42" y="296">BLK 01</text><text x="152" y="296">BLK 02</text><text x="262" y="296">BLK 03</text><text x="372" y="296" fill="#2FE6A6">BLK 04</text><text x="42" y="312">9f2câ€¦</text><text x="152" y="312">3ab7â€¦</text><text x="262" y="312">c41dâ€¦</text><text x="372" y="312">a41eâ€¦</text></g>
+  <circle r="4" fill="#F6DE8E" filter="url(#glow)"><animateMotion dur="3.5s" repeatCount="indefinite" path="M40 300H440"/></circle>
+  <text class="t" x="378" y="352" fill="#2FE6A6">â–² CHAIN TIP</text>
+ </svg><div class="cap"><em>Evidence Integrity</em><h2>Prove What Happened</h2><p>Tamper-evident evidence and cryptographic chain of custody.</p></div></div>
+
+ <!-- 4 -->
+ <div class="slide"><svg class="art" viewBox="0 0 520 420"><circle cx="260" cy="200" r="150" fill="none" stroke="#8B6CFF" stroke-opacity=".3" stroke-dasharray="2 6" class="spin"/>
+  <use href="#inv" x="165" y="70" width="190" height="247" opacity=".92"/>
+  <rect x="165" y="70" width="190" height="247" fill="none"/>
+  <g stroke="#E8C25A" stroke-opacity=".3" class="dash" fill="none"><path d="M170 120L110 100M350 140L400 110M180 260L110 290M350 250L400 290"/></g>
+  <rect x="20" y="60" width="130" height="64" rx="8" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><text class="t" x="32" y="80">AI ANALYSIS</text><path d="M32 92h90M32 102h64M32 112h76" stroke="#8B6CFF" stroke-width="3" class="pl"/>
+  <rect x="380" y="50" width="120" height="80" rx="8" fill="url(#holo)" stroke="#B58CFF" stroke-opacity=".6"/><circle cx="414" cy="92" r="20" fill="none" stroke="#2a1a5c" stroke-width="5"/><circle cx="414" cy="92" r="20" fill="none" stroke="#E8C25A" stroke-width="5" stroke-dasharray="109 126" transform="rotate(-90 414 92)"/><text class="t" x="404" y="96">87</text><text class="t" x="444" y="88">RISK</text><text class="t2" x="444" y="100">HIGH</text>
+  <rect x="20" y="280" width="120" height="56" rx="8" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><text x="32" y="316" font-family="Cinzel" font-weight="700" font-size="26" fill="#F6DE8E">8</text><text class="t" x="56" y="316">FINDINGS</text>
+  <rect x="370" y="260" width="130" height="90" rx="8" fill="url(#holo)" stroke="#E8C25A" stroke-opacity=".5"/><text class="t" x="382" y="280">MITRE ATT&amp;CK</text>
+  <g fill="#8B6CFF" opacity=".5"><rect x="382" y="292" width="14" height="10"/><rect x="400" y="292" width="14" height="10"/><rect x="418" y="292" width="14" height="10"/><rect x="436" y="292" width="14" height="10"/><rect x="454" y="292" width="14" height="10"/><rect x="382" y="306" width="14" height="10"/><rect x="400" y="306" width="14" height="10"/><rect x="418" y="306" width="14" height="10"/><rect x="436" y="306" width="14" height="10"/><rect x="454" y="306" width="14" height="10"/></g>
+  <g fill="#E8C25A"><rect class="pl" x="400" y="292" width="14" height="10"/><rect class="pl" x="436" y="306" width="14" height="10" style="animation-delay:1s"/><rect class="pl" x="382" y="306" width="14" height="10" style="animation-delay:2s"/><rect class="pl" x="454" y="292" width="14" height="10" style="animation-delay:.5s"/></g>
+ </svg><div class="cap"><em>Sentinel AI</em><h2>Investigate with Intelligence</h2><p>Sentinel AI helps investigators understand complex incidents.</p></div></div>
+
+ <!-- 5 -->
+ <div class="slide"><svg class="art" viewBox="0 0 520 420">
+  <g stroke="#E8C25A" stroke-opacity=".5" fill="url(#holo)"><rect x="30" y="20" width="150" height="100" rx="8"/><rect x="185" y="20" width="150" height="100" rx="8"/><rect x="340" y="20" width="150" height="100" rx="8"/><rect x="30" y="130" width="150" height="100" rx="8"/><rect x="185" y="130" width="150" height="100" rx="8"/><rect x="340" y="130" width="150" height="100" rx="8" stroke="#2FE6A6"/></g>
+  <g class="t"><text x="42" y="40">CASE</text><text x="197" y="40">EVIDENCE</text><text x="352" y="40">IOC</text><text x="42" y="150">TIMELINE</text><text x="197" y="150">FINDINGS</text><text x="352" y="150" fill="#2FE6A6">CHAIN STATUS</text></g>
+  <text x="42" y="82" font-family="Cinzel" font-weight="700" font-size="20" fill="#F4EFFF">TX-2041</text><text class="t2" x="42" y="104">ACTIVE Â· INVESTIGATOR</text>
+  <g fill="#E8C25A" opacity=".8"><rect x="200" y="86" width="14" height="22"/><rect x="222" y="70" width="14" height="38"/><rect x="244" y="78" width="14" height="30" class="pl"/><rect x="266" y="56" width="14" height="52"/><rect x="288" y="74" width="14" height="34"/></g>
+  <g class="t2"><text x="352" y="64">185.220.101.4</text><text x="352" y="80">evil-c2.example</text><text x="352" y="96">9f2c7aâ€¦a41e</text></g><circle class="pl" cx="472" cy="60" r="3" fill="#B58CFF"/>
+  <path d="M42 205L72 180 102 192 132 166 162 190" stroke="#B58CFF" fill="none" stroke-width="2"/><circle class="pl" cx="132" cy="166" r="4" fill="#E8C25A"/>
+  <text x="200" y="206" font-family="Cinzel" font-weight="700" font-size="34" fill="#F6DE8E">08</text>
+  <circle cx="368" cy="196" r="16" fill="none" stroke="#2FE6A6" filter="url(#glow)"/><path d="M361 196l5 5 9-10" stroke="#2FE6A6" stroke-width="2" fill="none"/><text class="t" x="392" y="200" fill="#2FE6A6">VERIFIED</text>
+  <use href="#inv" x="110" y="250" width="110" height="143" opacity=".75"/><use href="#inv" x="300" y="250" width="110" height="143" opacity=".75"/>
+  <path d="M60 372H460" stroke="#E8C25A" stroke-opacity=".5"/>
+ </svg><div class="cap"><em>Investigation Command Center</em><h2>One Investigation. One Source of Truth.</h2><p>Connect evidence, findings and forensic proof in one workspace.</p></div></div>
+
+ <div class="dots" id="dots"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+ var sl=[].slice.call(document.querySelectorAll('.slide')),dw=document.getElementById('dots'),cur=0,tm,paused=false,D=2800,bt=[];
+ sl.forEach(function(_,i){var b=document.createElement('button');b.setAttribute('aria-label','Slide '+(i+1));b.innerHTML='<i></i>';b.onclick=function(){show(i);sched()};dw.appendChild(b);bt.push(b)});
+ function show(i){cur=i;sl.forEach(function(s,k){s.classList.toggle('on',k===i)});bt.forEach(function(b,k){b.classList.remove('on');if(k===i){void b.offsetWidth;b.classList.add('on')}})}
+ function sched(){clearTimeout(tm);if(!paused)tm=setTimeout(function(){show((cur+1)%sl.length);sched()},D)}
+ var rp=document.getElementById('rp');
+ rp.addEventListener('mouseenter',function(){paused=true;clearTimeout(tm)});
+ rp.addEventListener('mouseleave',function(){paused=false;show(cur);sched()});
+ show(0);sched();
+ var p=document.getElementById('p'),eye=document.getElementById('eye');
+ eye.onclick=function(){p.type=p.type==='password'?'text':'password'};
+  var c=document.getElementById('pc'),x=c.getContext('2d'),W,H,pts=[],rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ function rs(){var r=rp.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);pts=[];for(var i=0;i<34;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vy:-.12-Math.random()*.25,r:Math.random()*1.5+.4,g:Math.random()<.7})}
+ rs();addEventListener('resize',rs);
+ (function dr(){x.clearRect(0,0,W,H);pts.forEach(function(p){if(!rm){p.y+=p.vy;if(p.y<-4){p.y=H+4;p.x=Math.random()*W}}x.fillStyle=p.g?'rgba(232,194,90,.55)':'rgba(181,140,255,.55)';x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()});if(!rm)requestAnimationFrame(dr)})();
+})();
+</script>
+
+</body>
+</html>
+
+
+
+

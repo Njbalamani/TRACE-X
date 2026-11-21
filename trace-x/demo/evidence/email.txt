@@ -1,0 +1,24 @@
+From: "IT Security" <security-alert@secure-notify.example>
+To: a.carter@corp.example
+Subject: Urgent: Verify your account credentials within 24 hours
+Date: Tue, 7 Oct 2026 09:44:50 +0000
+Message-ID: <20261007094450.1234@secure-notify.example>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear user,
+
+Your corporate account will be SUSPENDED within 24 hours due to a detected
+security policy violation.
+
+You must verify your credentials immediately using the secure portal below:
+
+    https://portal-secure.example-login.tk/auth?id=AC-4471
+
+Failure to verify will result in permanent account closure.
+
+Regards,
+IT Security Team
+secure-notify.example
+
+NOTE: This mailbox is not monitored. Do not reply.
